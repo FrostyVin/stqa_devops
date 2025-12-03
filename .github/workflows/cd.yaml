@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
 
-# Permissions for GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -27,7 +26,6 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # SUGGESTION 1: Start Server & Health Check
       - name: Start Flask App
         run: |
           # The '&' runs it in the background
@@ -41,18 +39,17 @@ jobs:
           done
 
       - name: Run Selenium Tests (Behave)
-        # Use the HTML formatter
         run: behave -f html-pretty -o index.html
 
       - name: Upload Report
-        if: always() # Run this even if tests fail!
+        if: always()
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
 
   deploy:
     needs: deploy-report
-    if: always() # Deploy even if there are red failures in the report
+    if: always()
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -60,8 +57,7 @@ jobs:
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-  
